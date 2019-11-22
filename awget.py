@@ -18,13 +18,7 @@ def sendAnonymousWget(url, steppingStones):
     print(a.path)
     print(os.path.basename(a.path))
 
-    steppingStones = trimWhiteSpaceFromStones(steppingStones)
-    randIndex = generateRandomIndex(len(steppingStones)-1)
-    steppingStone = steppingStones[randIndex]
-    ssInfo = steppingStone.split()
-    if len(ssInfo) != 2:
-        print("Error: Incorrect stepping stone representation, " + str(ssInfo) + ", found in the provided chainlist")
-        exit()
+    ssInfo = getRandomSteppingStone(steppingStones)
 
     clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -41,6 +35,16 @@ def sendAnonymousWget(url, steppingStones):
 
     clientSocket.close()
     print(recvd)
+
+
+def getRandomSteppingStone(steppingStones):
+    randIndex = generateRandomIndex(len(steppingStones)-1)
+    ssInfo = steppingStones[randIndex].split()
+    if len(ssInfo) != 2:
+        print("Error: Incorrect stepping stone representation, " + str(ssInfo) + ", found in the provided chainlist")
+        sys.exit()
+    else:
+        return ssInfo
 
 
 def generateRandomIndex(length):
@@ -71,12 +75,12 @@ if __name__ == "__main__":
                 steppingStones = f.readlines()
                 if len(steppingStones) != chainSize:
                     print("Error: the amount of stepping stones listed does not match the specified size")
-                    exit()
+                    sys.exit()
             except Exception as e:
                 print("Error: problem occurred while reading '" + chainFile + "'")
-                exit()
+                sys.exit()
     except Exception as e:
         print("Error: could not open '" + chainFile + "'")
-        exit()
+        sys.exit()
 
-    sendAnonymousWget(url, steppingStones)
+    sendAnonymousWget(url, trimWhiteSpaceFromStones(steppingStones))
