@@ -37,6 +37,7 @@ def sendAnonymousWget(url, steppingStones):
             recvd.extend(data)
     except socket.timeout as e:
         print("Error: nothing was received after 10 seconds")
+        sys.exit()
 
     clientSocket.close()
 
