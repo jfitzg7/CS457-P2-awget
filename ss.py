@@ -20,6 +20,9 @@ def handle_client(clientSocket, port):
             randIndex = random.randint(0, len(chainList)-1)
             nextSteppingStone = chainList[randIndex]
             ssInfo = nextSteppingStone.split()
+            if len(ssInfo) != 2:
+                print("Error: Incorrect stepping stone representation found in the provided chainlist")
+                exit()
 
             steppingStoneSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 

@@ -65,6 +65,9 @@ if __name__ == "__main__":
             try:
                 chainSize = int(f.readline())
                 steppingStones = f.readlines()
+                if len(steppingStones) != chainSize:
+                    print("Error: the amount of stepping stones listed does not match the specified size")
+                    exit()
             except Exception as e:
                 print("Error: problem occurred while reading '" + chainFile + "'")
                 exit()
