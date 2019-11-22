@@ -13,24 +13,30 @@ else:
 
 
 def sendAnonymousWget(url, steppingStones):
-
     ssInfo = getRandomSteppingStone(steppingStones)
 
     clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     clientSocket.settimeout(10)
 
-    clientSocket.connect((ssInfo[0], int(ssInfo[1])))
-    
+    try:
+        clientSocket.connect((ssInfo[0], int(ssInfo[1])))
+    except ConnectionRefusedError as e:
+        print("Error: connection refused to <" + ssInfo[0] + ", " + ssInfo[1] + ">")
+        sys.exit()
+
     clientSocket.send(json.dumps([url, steppingStones]).encode())
 
     recvd = bytearray()
 
-    data = clientSocket.recv(1024)
-    recvd.extend(data)
-
-    while data:
+    try:
         data = clientSocket.recv(1024)
         recvd.extend(data)
+
+        while data:
+            data = clientSocket.recv(1024)
+            recvd.extend(data)
+    except socket.timeout as e:
+        print("Error: nothing was received after 10 seconds")
 
     clientSocket.close()
 
