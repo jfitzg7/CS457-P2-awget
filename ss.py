@@ -90,10 +90,10 @@ if __name__ == "__main__":
     else:
         try:
             port = int(sys.argv[1])
-            if (port < 0 or port > 65535):
-                print("Error: please enter a port number in the range of 0-65535.")
+            if (port < 1024 or port > 65535):
+                print("Error: please enter a port number in the range of 1024-65535.")
                 exit()
-            print("ss <" + socket.gethostname() + ", " + str(port) + ">:")
+            print("ss <" + socket.gethostbyname(socket.gethostname()) + ", " + str(port) + ">:"
             server(port)
         except ValueError:
             print("Error: please enter a base 10 integer port number (i.e. no alphabetic or special characters).")
