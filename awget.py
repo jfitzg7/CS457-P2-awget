@@ -23,6 +23,9 @@ def sendAnonymousWget(url, steppingStones):
     randIndex = random.randint(0, len(steppingStones)-1)
     steppingStone = steppingStones[randIndex]
     ssInfo = steppingStone.split()
+    if len(ssInfo) != 2:
+        print("Error: Incorrect stepping stone representation found in the provided chainlist")
+        exit()
 
     clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
