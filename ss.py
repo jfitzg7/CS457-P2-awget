@@ -23,6 +23,7 @@ def handle_client(clientSocket, port):
                 sys.exit()
 
             steppingStoneSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            steppingStoneSocket.settimeout(10)
 
             steppingStoneSocket.connect((ssInfo[0], int(ssInfo[1])))
 
@@ -84,7 +85,7 @@ def server(port):
 
     while True:
         (clientSocket, address) = serverSocket.accept()
-        clientSocket.settimeout(1)
+        clientSocket.settimeout(10)
 
         clientThread = threading.Thread(target = handle_client, args = (clientSocket, port))
         clientThread.daemon = True
