@@ -12,9 +12,8 @@ def handle_client(clientSocket, port):
         data = clientSocket.recv(4096).decode()
         recvdJson = json.loads(data)
         url = recvdJson[0]
-        hostname = socket.gethostname()
-        chainList = removeEntryFromChainList(recvdJson[1], hostname + " " + str(port))
-        chainList = removeEntryFromChainList(chainList, socket.gethostbyname(hostname) + " " + str(port))
+        chainList = removeEntryFromChainList(recvdJson[1], socket.gethostname() + " " + str(port))
+        chainList = removeEntryFromChainList(chainList, socket.gethostbyname(socket.gethostname()) + " " + str(port))
         if chainList:
             randIndex = generateRandomIndex(len(chainList)-1)
             nextSteppingStone = chainList[randIndex]
@@ -91,6 +90,7 @@ def server(port):
         clientThread.daemon = True
         clientThread.start()
 
+    serverSocket.close()
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
