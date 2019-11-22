@@ -24,7 +24,7 @@ def handle_client(clientSocket, port):
 
             steppingStoneSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-            steppingStoneSocket.connect((ssInfo[0], int(ssInfo[1]))
+            steppingStoneSocket.connect((ssInfo[0], int(ssInfo[1])))
 
             steppingStoneSocket.send(json.dumps([url, chainList]).encode())
             fp = tempfile.NamedTemporaryFile(mode='ab+')
