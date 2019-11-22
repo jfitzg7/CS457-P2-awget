@@ -24,7 +24,7 @@ def handle_client(clientSocket, port):
 
             steppingStoneSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-            steppingStoneSocket.connect((ssInfo[0], int(ssInfo[1])))
+            steppingStoneSocket.connect((ssInfo[0], int(ssInfo[1]))
 
             steppingStoneSocket.send(json.dumps([url, chainList]).encode())
             fp = tempfile.NamedTemporaryFile(mode='ab+')
@@ -93,16 +93,17 @@ def server(port):
     serverSocket.close()
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
+    port = 8081 #default port number
+    if len(sys.argv) > 2:
         print("Error: Incorrect number of arguments provided.")
-    else:
+    elif len(sys.argv) == 2:
         try:
             port = int(sys.argv[1])
             if (port < 1024 or port > 65535):
                 print("Error: please enter a port number in the range of 1024-65535.")
                 exit()
-            print("ss <" + socket.gethostbyname(socket.gethostname()) + ", " + str(port) + ">:")
-            server(port)
         except ValueError:
             print("Error: please enter a base 10 integer port number (i.e. no alphabetic or special characters).")
             exit()
+    print("ss <" + socket.gethostbyname(socket.gethostname()) + ", " + str(port) + ">:")
+    server(port)
