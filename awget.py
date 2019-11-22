@@ -33,6 +33,10 @@ def sendAnonymousWget(url, steppingStones):
 
     clientSocket.close()
 
+    writeToFile(url, recvd)
+
+
+def writeToFile(url, recvd):
     if not recvd:
         print("Error: nothing was received")
         sys.exit()
