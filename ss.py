@@ -16,8 +16,7 @@ def handle_client(clientSocket, port):
         chainList = removeEntryFromChainList(recvdJson[1], hostname + " " + str(port))
         chainList = removeEntryFromChainList(chainList, socket.gethostbyname(hostname) + " " + str(port))
         if chainList:
-            random.seed()
-            randIndex = random.randint(0, len(chainList)-1)
+            randIndex = generateRandomIndex(len(chainList)-1)
             nextSteppingStone = chainList[randIndex]
             ssInfo = nextSteppingStone.split()
             if len(ssInfo) != 2:
@@ -45,7 +44,7 @@ def handle_client(clientSocket, port):
             fp.close()
             steppingStoneSocket.close()
         else:
-            fp = tempfile.NamedTemporaryFile()
+            fp = tempfile.NamedTemporaryFile(mode="ab+")
             os.system("wget " + "--output-document=" + fp.name + " " + url)
             for data in readChunks(fp):
                 clientSocket.send(data)
@@ -53,6 +52,12 @@ def handle_client(clientSocket, port):
         clientSocket.close()
     except IOError as e:
         print(e)
+        exit()
+
+
+def generateRandomIndex(length):
+    random.seed()
+    return random.randint(0, length)
 
 
 def readChunks(file, chunkSize=1024):

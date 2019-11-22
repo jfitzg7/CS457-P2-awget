@@ -18,9 +18,8 @@ def sendAnonymousWget(url, steppingStones):
     print(a.path)
     print(os.path.basename(a.path))
 
-    random.seed()
     steppingStones = trimWhiteSpaceFromStones(steppingStones)
-    randIndex = random.randint(0, len(steppingStones)-1)
+    randIndex = generateRandomIndex(len(steppingStones)-1)
     steppingStone = steppingStones[randIndex]
     ssInfo = steppingStone.split()
     if len(ssInfo) != 2:
@@ -42,6 +41,11 @@ def sendAnonymousWget(url, steppingStones):
 
     clientSocket.close()
     print(recvd)
+
+
+def generateRandomIndex(length):
+    random.seed()
+    return random.randint(0, length)
 
 
 def trimWhiteSpaceFromStones(steppingStones):
