@@ -1,4 +1,5 @@
 import os, sys
+import re
 import argparse
 import random
 import socket
@@ -13,28 +14,38 @@ else:
 
 def sendAnonymousWget(url, steppingStones):
 
-    a = urlparse(url)
-    print("scheme: " + a.scheme)
-    print(a.path)
-    print(os.path.basename(a.path))
-
     ssInfo = getRandomSteppingStone(steppingStones)
 
     clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    clientSocket.connect((ssInfo[0], int(ssInfo[1])))
+    clientSocket.connect((ssInfo[0], int(ssInfo[1].strip())))
 
     clientSocket.send(json.dumps([url, steppingStones]).encode())
 
+    recvd = bytearray()
+
     data = clientSocket.recv(1024)
-    recvd = data
+    recvd.extend(data)
 
     while data:
         data = clientSocket.recv(1024)
-        recvd += data
+        recvd.extend(data)
 
     clientSocket.close()
-    print(recvd)
+
+    if not recvd:
+        print("Error: nothing was received")
+        sys.exit()
+    else:
+        x = re.search("^.*://", url)
+        if not x:
+            url = "http://" + url #
+        a = urlparse(url)
+        filename = os.path.basename(a.path)
+        if not filename:
+            filename = "index.html"
+        with open(filename, "wb+") as f:
+            f.write(recvd)
 
 
 def getRandomSteppingStone(steppingStones):
