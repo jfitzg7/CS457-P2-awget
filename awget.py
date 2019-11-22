@@ -17,9 +17,10 @@ def sendAnonymousWget(url, steppingStones):
     ssInfo = getRandomSteppingStone(steppingStones)
 
     clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    clientSocket.settimeout(10)
 
-    clientSocket.connect((ssInfo[0], int(ssInfo[1].strip())))
-
+    clientSocket.connect((ssInfo[0], int(ssInfo[1])))
+    
     clientSocket.send(json.dumps([url, steppingStones]).encode())
 
     recvd = bytearray()
