@@ -14,8 +14,8 @@ def handle_client(clientSocket, port):
         url = recvdJson[0]
         hostname = socket.gethostname()
         chainList = removeEntryFromChainList(recvdJson[1], hostname + " " + str(port))
+        chainList = removeEntryFromChainList(chainList, socket.gethostbyname(hostname) + " " + str(port))
         if chainList:
-            print("wtf")
             random.seed()
             randIndex = random.randint(0, len(chainList)-1)
             nextSteppingStone = chainList[randIndex]
@@ -62,7 +62,10 @@ def readChunks(file, chunkSize=1024):
 
 def removeEntryFromChainList(chainList, entry):
     newList = copy.deepcopy(chainList)
-    newList.remove(entry)
+    try:
+        newList.remove(entry)
+    except ValueError as e:
+        None
     return newList
 
 
