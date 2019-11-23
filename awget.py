@@ -16,6 +16,15 @@ else:
 def sendAnonymousWget(url, steppingStones):
     ssInfo = getRandomSteppingStone(steppingStones)
 
+    print("  Request: " + url)
+    print("  chainlist is")
+    for steppingStone in steppingStones:
+        ss = steppingStone.split()
+        print("  <" + ss[0] + ", " + ss[1] + ">")
+    print("  next SS is " + "<" + ss[0] + ", " + ss[1] + ">")
+
+    print("  waiting for file...")
+
     clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     clientSocket.settimeout(10)
 
@@ -82,6 +91,8 @@ def writeToFile(url, recvd):
             filename = "index.html"
         with open(filename, "wb+") as f:
             f.write(recvd)
+        print("..\n  Received file " + filename)
+        print("  Goodbye!")
 
 
 def getRandomSteppingStone(steppingStones):
@@ -107,6 +118,7 @@ def trimWhiteSpaceFromStones(steppingStones):
 
 
 if __name__ == "__main__":
+    print("awget:")
     parser = argparse.ArgumentParser(description="Anonymous wget")
     parser.add_argument("url")
     parser.add_argument("-c", nargs="?", const="chaingang.txt", default="chaingang.txt", metavar="chainfile")
