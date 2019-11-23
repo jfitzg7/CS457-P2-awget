@@ -17,7 +17,10 @@ def sendAnonymousWget(url, steppingStones):
     ssInfo = getRandomSteppingStone(steppingStones)
     print("Request: " + url)
     print("chainlist is")
-    print("<" + ssInfo[0] + ", " + ssInfo[1] + ">")
+    x=0
+    while x < (len(steppingStones)):
+        print("<" + steppingStones[x]   + ">")
+        x+=1
     print("next SS is " + "<" + ssInfo[0] + ", " + ssInfo[1] + ">")
 
     print("waiting for file...")
