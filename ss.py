@@ -150,7 +150,11 @@ def removeEntryFromChainList(chainList, entry):
 def server(port):
     serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     serverSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    serverSocket.bind((socket.gethostname(), port))
+    try:
+        serverSocket.bind((socket.gethostname(), port))
+    except OSError as e:
+        print("Error: " + str(e))
+        sys.exit()
     serverSocket.listen(5)
 
     while True:
