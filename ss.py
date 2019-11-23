@@ -50,7 +50,7 @@ def handle_client(clientSocket, port):
             steppingStoneSocket.close()
         else:
             fp = tempfile.NamedTemporaryFile(mode="ab+")
-            os.system("wget " + "--output-document=" + fp.name + " " + url)
+            os.system("wget -q " + "--output-document=" + fp.name + " " + url)
             for data in readChunks(fp):
                 clientSocket.send(data)
             fp.close()
