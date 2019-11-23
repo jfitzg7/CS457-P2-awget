@@ -10,31 +10,7 @@ import threading
 
 def handle_client(clientSocket, port):
     try:
-        buf = b''
-        while len(buf) < 4:
-            recvd = clientSocket.recv(8)
-            if not recvd:
-                break
-            else:
-                buf += recvd
-        length = struct.unpack('!I', buf[:4])[0]
-
-        clientSocket.send(struct.pack('!I', length)) #Send the length back as an acknowledgement before receiving again
-
-        data = ''
-        while len(data) < length:
-            recvd = clientSocket.recv(1024)
-            if not recvd:
-                break
-            else:
-                data += recvd.decode()
-            print("data received: " + data)
-            print("current length: " + str(len(data)))
-        print(data)
-
-        if len(data) != length:
-            print("Error: something went wrong while receiving the url and chainlist, the lengths do not match!")
-            sys.exit()
+        data = receiveUrlAndChainlist(clientSocket)
 
         recvdJson = json.loads(data)
         url = recvdJson[0]
@@ -101,6 +77,35 @@ def handle_client(clientSocket, port):
     except IOError as e:
         print(e)
         sys.exit()
+
+
+def receiveUrlAndChainlist(clientSocket):
+    buf = b''
+    while len(buf) < 4:
+        recvd = clientSocket.recv(8)
+        if not recvd:
+            break
+        else:
+            buf += recvd
+    length = struct.unpack('!I', buf[:4])[0]
+
+    clientSocket.send(struct.pack('!I', length)) #Send the length back as an acknowledgement before receiving again
+
+    data = ''
+    while len(data) < length:
+        recvd = clientSocket.recv(1024)
+        if not recvd:
+            break
+        else:
+            data += recvd.decode()
+        print("data received: " + data)
+        print("current length: " + str(len(data)))
+
+    if len(data) != length:
+        print("Error: something went wrong while receiving the url and chainlist, the lengths do not match!")
+        sys.exit()
+
+    return data
 
 
 def generateRandomIndex(length):
