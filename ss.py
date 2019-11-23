@@ -2,6 +2,7 @@ import os, sys
 import copy
 import json
 import socket
+import struct
 import random
 import tempfile
 import threading
@@ -9,11 +10,38 @@ import threading
 
 def handle_client(clientSocket, port):
     try:
-        data = clientSocket.recv(4096).decode()
+        buf = b''
+        while len(buf) < 4:
+            recvd = clientSocket.recv(8)
+            if not recvd:
+                break
+            else:
+                buf += recvd
+        length = struct.unpack('!I', buf[:4])[0]
+
+        clientSocket.send(struct.pack('!I', length)) #Send the length back as an acknowledgement before receiving again
+
+        data = ''
+        while len(data) < length:
+            recvd = clientSocket.recv(1024)
+            if not recvd:
+                break
+            else:
+                data += recvd.decode()
+            print("data received: " + data)
+            print("current length: " + str(len(data)))
+        print(data)
+
+        if len(data) != length:
+            print("Error: something went wrong while receiving the url and chainlist, the lengths do not match!")
+            sys.exit()
+
         recvdJson = json.loads(data)
         url = recvdJson[0]
+
         chainList = removeEntryFromChainList(recvdJson[1], socket.gethostname() + " " + str(port))
         chainList = removeEntryFromChainList(chainList, socket.gethostbyname(socket.gethostname()) + " " + str(port))
+
         if chainList:
             randIndex = generateRandomIndex(len(chainList)-1)
             nextSteppingStone = chainList[randIndex]
@@ -27,7 +55,27 @@ def handle_client(clientSocket, port):
 
             steppingStoneSocket.connect((ssInfo[0], int(ssInfo[1])))
 
-            steppingStoneSocket.send(json.dumps([url, chainList]).encode())
+            urlAndChainlist = json.dumps([url, chainList]).encode()
+            length = struct.pack("!I", len(urlAndChainlist))
+            steppingStoneSocket.send(length)
+
+            #Handle acknowledgement
+            buf = b''
+            while len(buf) < 4:
+                recvd = steppingStoneSocket.recv(8)
+                if not recvd:
+                    break
+                else:
+                    buf += recvd
+
+            ack = struct.unpack('!I', buf[:4])[0]
+
+            if ack != len(urlAndChainlist):
+                print("Protocol error: the length received in the ack does not match, the url and chainlist will not be sent!")
+                sys.exit()
+
+            steppingStoneSocket.send(urlAndChainlist)
+
             fp = tempfile.NamedTemporaryFile(mode='ab+')
 
             data = steppingStoneSocket.recv(1024)

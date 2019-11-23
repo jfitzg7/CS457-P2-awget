@@ -3,6 +3,7 @@ import re
 import argparse
 import random
 import socket
+import struct
 import json
 
 py3 = sys.version_info[0] >= 3
@@ -24,7 +25,26 @@ def sendAnonymousWget(url, steppingStones):
         print("Error: connection refused to <" + ssInfo[0] + ", " + ssInfo[1] + ">")
         sys.exit()
 
-    clientSocket.send(json.dumps([url, steppingStones]).encode())
+    urlAndChainlist = json.dumps([url, steppingStones]).encode()
+    length = struct.pack("!I", len(urlAndChainlist))
+    clientSocket.send(length)
+
+    #Handle acknowledgement
+    buf = b''
+    while len(buf) < 4:
+        recvd = clientSocket.recv(8)
+        if not recvd:
+            break
+        else:
+            buf += recvd
+
+    ack = struct.unpack('!I', buf[:4])[0]
+
+    if ack != len(urlAndChainlist):
+        print("Protocol error: the length received in the ack does not match, the url and chainlist will not be sent!")
+        sys.exit()
+
+    clientSocket.send(urlAndChainlist)
 
     recvd = bytearray()
 
