@@ -21,7 +21,7 @@ How to run the project:
     
     Computer 1: IP address = 1.1.1.1
       $ python ss.py
-      ss <1.1.1.1, 8081>:
+      ss <1.1.1.1, 64723>:
       
     Computer 2: IP address = 2.2.2.2
       $ python ss.py 5000
@@ -30,7 +30,7 @@ How to run the project:
     Your computer:
       $ cat chaingang.txt
       2
-      1.1.1.1 8081
+      1.1.1.1 64723
       2.2.2.2 5000
       $ python awget.py www.google.com
       $ cat index.html
