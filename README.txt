@@ -16,3 +16,8 @@ How to run the project:
   (NOTE: specifying the chainlist file is optional, the default is chaingang.txt) 
 
   5.) If all goes well, the file that is returned should be stored in the same directory where the awget.py script was executed. 
+
+
+Important things to note:
+
+  - All sockets will timeout after 10 seconds if nothing is received.
