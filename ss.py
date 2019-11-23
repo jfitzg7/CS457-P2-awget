@@ -15,13 +15,13 @@ def handle_client(clientSocket, port):
         recvdJson = json.loads(data)
         url = recvdJson[0]
         print("  Request: " + url)
-        print("  chainlist is")
         chainList = removeEntryFromChainList(recvdJson[1], socket.gethostname() + " " + str(port))
         chainList = removeEntryFromChainList(chainList, socket.gethostbyname(socket.gethostname()) + " " + str(port))
-        for chainList in chainList:
-            ss = chainList.split()
-            print("  <" + ss[0] + ", " + ss[1] + ">")
         if chainList:
+            print("  chainlist is")
+            for steppingStone in chainList:
+                ss = steppingStone.split()
+                print("  <" + ss[0] + ", " + ss[1] + ">")
             randIndex = generateRandomIndex(len(chainList)-1)
             nextSteppingStone = chainList[randIndex]
             ssInfo = nextSteppingStone.split()
@@ -48,16 +48,22 @@ def handle_client(clientSocket, port):
 
             fp.seek(0) #this is needed to reset the read 'pointer' to the beginning of the file
 
+            print("..\n  Relaying file ...")
+
             for data in readChunks(fp):
                 clientSocket.send(data)
             fp.close()
+            print("  Goodbye!\n")
             steppingStoneSocket.close()
         else:
+            print("  chainlist is empty\n  issuing wget for file")
             fp = tempfile.NamedTemporaryFile(mode="ab+")
             os.system("wget -q " + "--output-document=" + fp.name + " " + url)
+            print("..\n  File received\n  Relaying file ...")
             for data in readChunks(fp):
                 clientSocket.send(data)
             fp.close()
+            print("  Goodbye!\n")
         clientSocket.close()
     except IOError as e:
         print(e)
@@ -93,7 +99,6 @@ def receiveUrlAndChainlist(clientSocket):
     if len(data) != length:
         print("Error: something went wrong while receiving the url and chainlist, the lengths do not match!")
         sys.exit()
-    print("Relaying file...")
     return data
 
 
