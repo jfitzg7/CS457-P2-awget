@@ -25,6 +25,27 @@ def sendAnonymousWget(url, steppingStones):
         print("Error: connection refused to <" + ssInfo[0] + ", " + ssInfo[1] + ">")
         sys.exit()
 
+    sendUrlAndChainlist(clientSocket, url, steppingStones)
+
+    recvd = bytearray()
+
+    try:
+        data = clientSocket.recv(1024)
+        recvd.extend(data)
+
+        while data:
+            data = clientSocket.recv(1024)
+            recvd.extend(data)
+    except socket.timeout as e:
+        print("Error: nothing was received after 10 seconds")
+        sys.exit()
+
+    clientSocket.close()
+
+    writeToFile(url, recvd)
+
+
+def sendUrlAndChainlist(clientSocket, url, steppingStones):
     urlAndChainlist = json.dumps([url, steppingStones]).encode()
     length = struct.pack("!I", len(urlAndChainlist))
     clientSocket.send(length)
@@ -45,23 +66,6 @@ def sendAnonymousWget(url, steppingStones):
         sys.exit()
 
     clientSocket.send(urlAndChainlist)
-
-    recvd = bytearray()
-
-    try:
-        data = clientSocket.recv(1024)
-        recvd.extend(data)
-
-        while data:
-            data = clientSocket.recv(1024)
-            recvd.extend(data)
-    except socket.timeout as e:
-        print("Error: nothing was received after 10 seconds")
-        sys.exit()
-
-    clientSocket.close()
-
-    writeToFile(url, recvd)
 
 
 def writeToFile(url, recvd):
