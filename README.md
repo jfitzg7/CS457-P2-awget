@@ -4,6 +4,7 @@ Authors:
 
 
 How to run the project:
+
   1.) Run the ss.py script on 1 or more computers by executing 'python ss.py [port]' (NOTE: the port is optional, default is 8081)
   
   2.) Take note of the IP address and port that gets printed after running ss.py.
