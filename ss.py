@@ -14,10 +14,13 @@ def handle_client(clientSocket, port):
 
         recvdJson = json.loads(data)
         url = recvdJson[0]
-
+        print("  Request: " + url)
+        print("  chainlist is")
         chainList = removeEntryFromChainList(recvdJson[1], socket.gethostname() + " " + str(port))
         chainList = removeEntryFromChainList(chainList, socket.gethostbyname(socket.gethostname()) + " " + str(port))
-
+        for chainList in chainList:
+            ss = chainList.split()
+            print("  <" + ss[0] + ", " + ss[1] + ">")
         if chainList:
             randIndex = generateRandomIndex(len(chainList)-1)
             nextSteppingStone = chainList[randIndex]
@@ -25,7 +28,8 @@ def handle_client(clientSocket, port):
             if len(ssInfo) != 2:
                 print("Error: Incorrect stepping stone representation, " + str(ssInfo) + ", found in the provided chainlist")
                 sys.exit()
-
+            print("  next SS is " + "<" + ssInfo[0] + ", " + ssInfo[1] + ">")
+            print("  waiting for file...")
             steppingStoneSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             steppingStoneSocket.settimeout(10)
 
@@ -89,7 +93,7 @@ def receiveUrlAndChainlist(clientSocket):
     if len(data) != length:
         print("Error: something went wrong while receiving the url and chainlist, the lengths do not match!")
         sys.exit()
-
+    print("Relaying file...")
     return data
 
 
