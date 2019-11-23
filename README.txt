@@ -17,7 +17,26 @@ How to run the project:
 
   5.) If all goes well, the file that is returned should be stored in the same directory where the awget.py script was executed. 
 
-
+  Example:
+    
+    Computer 1: IP address = 1.1.1.1
+      $ python ss.py
+      ss <1.1.1.1, 8081>:
+      
+    Computer 2: IP address = 2.2.2.2
+      $ python ss.py 5000
+      ss <2.2.2.2, 5000>:
+      
+    Your computer:
+      $ cat chaingang.txt
+      2
+      1.1.1.1 8081
+      2.2.2.2 5000
+      $ python awget.py www.google.com
+      $ cat index.html
+      <INSERT OUTPUT FROM 'www.google.com' HERE>
+      
+      
 Important things to note:
 
   - All sockets will timeout after 10 seconds if nothing is received.
