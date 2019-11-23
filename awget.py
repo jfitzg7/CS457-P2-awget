@@ -15,7 +15,12 @@ else:
 
 def sendAnonymousWget(url, steppingStones):
     ssInfo = getRandomSteppingStone(steppingStones)
+    print("Request: " + url)
+    print("chainlist is")
+    print("<" + ssInfo[0] + ", " + ssInfo[1] + ">")
+    print("next SS is " + "<" + ssInfo[0] + ", " + ssInfo[1] + ">")
 
+    print("waiting for file...")
     clientSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     clientSocket.settimeout(10)
 
@@ -25,27 +30,6 @@ def sendAnonymousWget(url, steppingStones):
         print("Error: connection refused to <" + ssInfo[0] + ", " + ssInfo[1] + ">")
         sys.exit()
 
-    sendUrlAndChainlist(clientSocket, url, steppingStones)
-
-    recvd = bytearray()
-
-    try:
-        data = clientSocket.recv(1024)
-        recvd.extend(data)
-
-        while data:
-            data = clientSocket.recv(1024)
-            recvd.extend(data)
-    except socket.timeout as e:
-        print("Error: nothing was received after 10 seconds")
-        sys.exit()
-
-    clientSocket.close()
-
-    writeToFile(url, recvd)
-
-
-def sendUrlAndChainlist(clientSocket, url, steppingStones):
     urlAndChainlist = json.dumps([url, steppingStones]).encode()
     length = struct.pack("!I", len(urlAndChainlist))
     clientSocket.send(length)
@@ -67,6 +51,23 @@ def sendUrlAndChainlist(clientSocket, url, steppingStones):
 
     clientSocket.send(urlAndChainlist)
 
+    recvd = bytearray()
+
+    try:
+        data = clientSocket.recv(1024)
+        recvd.extend(data)
+
+        while data:
+            data = clientSocket.recv(1024)
+            recvd.extend(data)
+    except socket.timeout as e:
+        print("Error: nothing was received after 10 seconds")
+        sys.exit()
+
+    clientSocket.close()
+
+    writeToFile(url, recvd)
+
 
 def writeToFile(url, recvd):
     if not recvd:
@@ -82,7 +83,8 @@ def writeToFile(url, recvd):
             filename = "index.html"
         with open(filename, "wb+") as f:
             f.write(recvd)
-
+        print("Received file " + filename)
+        print("Goodbye!")
 
 def getRandomSteppingStone(steppingStones):
     randIndex = generateRandomIndex(len(steppingStones)-1)
