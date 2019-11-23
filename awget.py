@@ -21,7 +21,7 @@ def sendAnonymousWget(url, steppingStones):
     for steppingStone in steppingStones:
         ss = steppingStone.split()
         print("  <" + ss[0] + ", " + ss[1] + ">")
-    print("  next SS is " + "<" + ss[0] + ", " + ss[1] + ">")
+    print("  next SS is " + "<" + ssInfo[0] + ", " + ssInfo[1] + ">")
 
     print("  waiting for file...")
 
