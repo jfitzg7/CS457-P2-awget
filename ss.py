@@ -14,9 +14,14 @@ def handle_client(clientSocket, port):
 
         recvdJson = json.loads(data)
         url = recvdJson[0]
-
+        print("  Request: " + url)
+        print("  chainlist is")
         chainList = removeEntryFromChainList(recvdJson[1], socket.gethostname() + " " + str(port))
         chainList = removeEntryFromChainList(chainList, socket.gethostbyname(socket.gethostname()) + " " + str(port))
+        for chainList in chainList:
+            ss = chainList.split()
+            print("  <" + ss[0] + ", " + ss[1] + ">")
+
 
         if chainList:
             randIndex = generateRandomIndex(len(chainList)-1)
@@ -25,12 +30,12 @@ def handle_client(clientSocket, port):
             if len(ssInfo) != 2:
                 print("Error: Incorrect stepping stone representation, " + str(ssInfo) + ", found in the provided chainlist")
                 sys.exit()
-
             steppingStoneSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             steppingStoneSocket.settimeout(10)
 
             steppingStoneSocket.connect((ssInfo[0], int(ssInfo[1])))
-
+            print("  next SS is " + "<" + ssInfo[0] + ", " + ssInfo[1] + ">")
+            print("  waiting for file...")
             sendUrlAndChainlist(steppingStoneSocket, url, chainList)
 
             fp = tempfile.NamedTemporaryFile(mode='ab+')
@@ -89,7 +94,7 @@ def receiveUrlAndChainlist(clientSocket):
     if len(data) != length:
         print("Error: something went wrong while receiving the url and chainlist, the lengths do not match!")
         sys.exit()
-
+    print("Relaying file...")
     return data
 
 
@@ -168,4 +173,5 @@ if __name__ == "__main__":
             print("Error: please enter a base 10 integer port number (i.e. no alphabetic or special characters).")
             sys.exit()
     print("ss <" + socket.gethostbyname(socket.gethostname()) + ", " + str(port) + ">:")
+
     server(port)
