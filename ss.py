@@ -168,7 +168,7 @@ def server(port):
     serverSocket.close()
 
 if __name__ == "__main__":
-    port = 8081 #default port number
+    port = 64723 #default port number
     if len(sys.argv) > 2:
         print("Error: Incorrect number of arguments provided.")
     elif len(sys.argv) == 2:
