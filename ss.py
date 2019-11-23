@@ -59,6 +59,7 @@ def handle_client(clientSocket, port):
             length = struct.pack("!I", len(urlAndChainlist))
             steppingStoneSocket.send(length)
 
+            #Handle acknowledgement
             buf = b''
             while len(buf) < 4:
                 recvd = steppingStoneSocket.recv(8)
@@ -67,9 +68,11 @@ def handle_client(clientSocket, port):
                 else:
                     buf += recvd
 
-            num = struct.unpack('!I', buf[:4])[0]
+            ack = struct.unpack('!I', buf[:4])[0]
 
-            #TODO: Check to make sure the returned num == length
+            if ack != len(urlAndChainlist):
+                print("Protocol error: the length received in the ack does not match, the url and chainlist will not be sent!")
+                sys.exit()
 
             steppingStoneSocket.send(urlAndChainlist)
 

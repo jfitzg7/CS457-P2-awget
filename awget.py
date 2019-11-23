@@ -29,6 +29,7 @@ def sendAnonymousWget(url, steppingStones):
     length = struct.pack("!I", len(urlAndChainlist))
     clientSocket.send(length)
 
+    #Handle acknowledgement
     buf = b''
     while len(buf) < 4:
         recvd = clientSocket.recv(8)
@@ -37,9 +38,11 @@ def sendAnonymousWget(url, steppingStones):
         else:
             buf += recvd
 
-    num = struct.unpack('!I', buf[:4])[0]
+    ack = struct.unpack('!I', buf[:4])[0]
 
-    #TODO: make sure the received num == length
+    if ack != len(urlAndChainlist):
+        print("Protocol error: the length received in the ack does not match, the url and chainlist will not be sent!")
+        sys.exit()
 
     clientSocket.send(urlAndChainlist)
 
